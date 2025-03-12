@@ -1,0 +1,14 @@
+[
+    {
+        "hash": "0xabc123456789...",
+        "from": "0xSenderAddress1",
+        "to": "0xReceiverAddress1",
+        "value": "10.5"
+    },
+    {
+        "hash": "0xdef987654321...",
+        "from": "0xHighRiskAddress",
+        "to": "0xReceiverAddress2",
+        "value": "50.0"
+    }
+]

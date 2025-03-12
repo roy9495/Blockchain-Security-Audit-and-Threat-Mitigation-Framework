@@ -1,0 +1,8 @@
+{
+    "attack_type": "Reentrancy",
+    "contract_address": "0x123456789abcdef",
+    "attacker_address": "0xabcdef123456789",
+    "timestamp": "2024-03-12T14:35:00Z",
+    "tx_hash": "0xabcdef123456789abcdef123456789"
+  }
+  

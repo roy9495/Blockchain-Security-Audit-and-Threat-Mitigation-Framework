@@ -1,0 +1,5 @@
+{
+    "detectors": ["reentrancy", "integer_overflow", "tx_origin"],
+    "exclude": ["naming", "optimization"]
+  }
+  

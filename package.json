@@ -1,0 +1,22 @@
+{
+  "name": "blockchain-security-audit-and-threat-mitigation-framework",
+  "version": "1.0.0",
+  "description": "Blockchain Security Audit Framework",
+  "main": "hardhat.config.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TATHAGATA ROY",
+  "license": "ISC",
+  "devDependencies": {
+    "hardhat": "^2.22.19"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.7"
+  }
+}
