@@ -6,23 +6,25 @@ const monitoredContract = "0xabcdef123456789"; // Replace with vulnerable contra
 
 console.log("🚀 Monitoring for reentrancy attacks...");
 
-web3.eth.subscribe("pendingTransactions", async (txHash) => {
+const subscription = web3.eth.subscribe("newBlockHeaders", async (error, blockHeader) => {
+    if (error) {
+        console.error("❌ Subscription error:", error);
+        return;
+    }
+
     try {
-        const tx = await web3.eth.getTransaction(txHash);
+        const block = await web3.eth.getBlock(blockHeader.number, true);
 
-        if (tx && tx.to.toLowerCase() === monitoredContract.toLowerCase()) {
-            console.log("⚠️ Transaction to monitored contract detected:", tx);
+        if (block && block.transactions) {
+            const contractCalls = block.transactions.filter(
+                (tx) => tx.to && tx.to.toLowerCase() === monitoredContract.toLowerCase()
+            );
 
-            // Check if multiple withdrawals occur within the same block
-            const block = await web3.eth.getBlock(tx.blockNumber, true);
-            let withdrawalCount = block.transactions.filter(t => t.to === monitoredContract).length;
-
-            if (withdrawalCount > 5) { // 🚨 Multiple withdrawals in same block
-                console.log("🚨 Possible reentrancy attack detected!");
+            if (contractCalls.length > 5) { // 🚨 Multiple interactions in the same block
+                console.log(`🚨 Possible reentrancy attack detected in block ${blockHeader.number}! Calls count: ${contractCalls.length}`);
             }
         }
-
-    } catch (error) {
-        console.error("❌ Error fetching transaction:", error);
+    } catch (err) {
+        console.error("❌ Error processing block:", err);
     }
 });

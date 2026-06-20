@@ -10,7 +10,7 @@ web3.eth.subscribe("pendingTransactions", async (txHash) => {
     try {
         const tx = await web3.eth.getTransaction(txHash);
 
-        if (tx && tx.to.toLowerCase() === lendingPoolAddress.toLowerCase()) {
+        if (tx && tx.to && tx.to.toLowerCase() === lendingPoolAddress.toLowerCase()) {
             const valueInEth = web3.utils.fromWei(tx.value, "ether");
 
             if (parseFloat(valueInEth) > 1000) { // 🚨 Large flash loan detected

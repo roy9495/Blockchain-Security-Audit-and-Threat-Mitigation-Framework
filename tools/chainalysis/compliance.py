@@ -1,7 +1,15 @@
 import os
 import json
 import requests
+import sys
 from dotenv import load_dotenv
+
+# Ensure console supports utf-8 emojis on Windows
+if hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 # Load API key from .env file
 load_dotenv()
@@ -16,14 +24,21 @@ HEADERS = {
 
 def check_wallet_address(address):
     """Check if a wallet address is flagged for illicit activity."""
-    url = f"{API_URL}/address/{address}"
-    response = requests.get(url, headers=HEADERS)
+    if not API_KEY or API_KEY == "your_api_key_here":
+        # Offline Mock Mode
+        if "HighRisk" in address or address == "0xHighRiskAddress":
+            return {"riskScore": 90, "source": "mock"}
+        return {"riskScore": 15, "source": "mock"}
 
-    if response.status_code == 200:
-        data = response.json()
-        return data  # Returns full risk report
-    else:
-        return {"error": "Failed to fetch data", "status_code": response.status_code}
+    url = f"{API_URL}/address/{address}"
+    try:
+        response = requests.get(url, headers=HEADERS, timeout=10)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {"error": "Failed to fetch data", "status_code": response.status_code, "riskScore": 0}
+    except Exception as e:
+        return {"error": str(e), "riskScore": 0}
 
 def scan_transactions(file_path):
     """Scan transactions for compliance violations."""
@@ -58,11 +73,15 @@ def scan_transactions(file_path):
 
 def main():
     """Main function to scan transactions and print flagged results."""
-    transactions_file = "transactions.json"
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    transactions_file = os.path.join(script_dir, "transactions.json")
     
     if not os.path.exists(transactions_file):
-        print("❌ Error: transactions.json not found!")
+        print(f"❌ Error: {transactions_file} not found!")
         return
+    
+    if not API_KEY or API_KEY == "your_api_key_here":
+        print("⚠️  Warning: No CHAINALYSIS_API_KEY detected in .env. Running in OFFLINE MOCK MODE.")
     
     print("🚀 Scanning transactions for compliance violations...")
     flagged = scan_transactions(transactions_file)

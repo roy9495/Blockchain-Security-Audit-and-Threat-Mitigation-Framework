@@ -3,20 +3,21 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract SecureContract is Ownable, ReentrancyGuard {
+contract SecureContract is Ownable, ReentrancyGuard, Pausable {
     mapping(address => uint256) public balances;
     
     event Deposit(address indexed user, uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
 
-    function deposit() public payable {
+    function deposit() public payable whenNotPaused {
         require(msg.value > 0, "Must deposit more than 0");
         balances[msg.sender] += msg.value;
         emit Deposit(msg.sender, msg.value);
     }
 
-    function withdraw() public nonReentrant {
+    function withdraw() public nonReentrant whenNotPaused {
         uint256 amount = balances[msg.sender];
         require(amount > 0, "Insufficient balance");
 
@@ -28,7 +29,11 @@ contract SecureContract is Ownable, ReentrancyGuard {
         emit Withdraw(msg.sender, amount);
     }
 
-    function emergencyPause() external onlyOwner {
-        selfdestruct(payable(owner()));
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }

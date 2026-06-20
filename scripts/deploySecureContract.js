@@ -8,9 +8,10 @@ async function main() {
 
   // Deploy the contract
   const secureContract = await Secure.deploy();
-  await secureContract.deployed();
+  await secureContract.waitForDeployment();
 
-  console.log("Secure contract deployed at:", secureContract.address);
+  const contractAddress = await secureContract.getAddress();
+  console.log("Secure contract deployed at:", contractAddress);
 }
 
 // Execute deployment script

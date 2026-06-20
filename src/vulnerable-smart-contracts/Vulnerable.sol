@@ -1,4 +1,4 @@
-// WARNING: This contract contains a reentrancy vulnerability
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
 contract Vulnerable {

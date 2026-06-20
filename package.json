@@ -8,7 +8,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "audit": "node scripts/automatedAudit.js"
   },
   "author": "TATHAGATA ROY",
   "license": "ISC",
@@ -17,6 +19,7 @@
   },
   "dependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^4.9.6",
     "dotenv": "^16.4.7"
   }
 }

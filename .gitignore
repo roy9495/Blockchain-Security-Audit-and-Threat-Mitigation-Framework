@@ -1,3 +1,18 @@
+# Environment variables
 .env
+
+# Node.js dependencies
+node_modules/
 package-lock.json
-node_modules
+
+# Hardhat build artifacts and cache
+artifacts/
+cache/
+typechain/
+typechain-types/
+
+# Python virtual environment and cache files
+__pycache__/
+*.pyc
+venv/
+.env

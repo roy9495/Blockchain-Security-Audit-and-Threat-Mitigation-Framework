@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
 contract InsecureBridge {
@@ -6,6 +7,6 @@ contract InsecureBridge {
     function processMessage(bytes32 messageId) public {
         require(!processedMessages[messageId], "Message already processed");
         processedMessages[messageId] = true;
-        // 🚨 No authentication mechanism!
+        // 🚨 No authentication mechanism! (Anyone can submit any message)
     }
 }

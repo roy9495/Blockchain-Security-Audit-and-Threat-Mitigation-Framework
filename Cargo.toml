@@ -1,0 +1,9 @@
+[package]
+name = "blockchain-security-audit-and-threat-mitigation-framework"
+version = "1.0.0"
+edition = "2021"
+description = "Solidity and Smart Contract security auditing and mitigation framework"
+authors = ["TATHAGATA ROY"]
+
+[dependencies]
+# Dependencies for Solana/Substrate auditing (e.g. anchor-lang, etc.) can be added here if Rust-based contracts are introduced.

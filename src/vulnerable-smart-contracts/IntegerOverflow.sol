@@ -1,10 +1,13 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
 contract IntegerOverflow {
     mapping(address => uint256) public balances;
 
     function increaseBalance(uint256 amount) public {
-        balances[msg.sender] += amount;  // 🚨 Vulnerable: No overflow check
+        unchecked {
+            balances[msg.sender] += amount;  // 🚨 Vulnerable: overflow check bypassed via unchecked
+        }
     }
 
     function withdraw() public {
