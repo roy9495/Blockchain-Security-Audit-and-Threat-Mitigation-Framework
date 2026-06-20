@@ -1,161 +1,130 @@
-# **Blockchain Security Audit Framework** 🚀  
+# Blockchain Security Audit and Threat Mitigation Framework
 
-## **Overview**  
-This **Blockchain Security Audit Framework** provides an end-to-end **security auditing solution** for:  
-✅ **Smart Contracts** (Ethereum, Solidity, Rust, Move)  
-✅ **Blockchain Nodes & Infrastructure** (Geth, Nethermind, Solana RPCs)  
-✅ **Cross-Chain Security** (Bridges, LayerZero, Wormhole)  
-✅ **Compliance Monitoring** (GDPR, AML, OWASP, NIST)  
-✅ **Threat Detection & Incident Response**  
+This framework provides an end-to-end security auditing and vulnerability verification solution for smart contracts, blockchain nodes, cross-chain bridges, compliance scanning, and incident response.
 
 ---
 
-## **📂 Project Structure**  
+## Project Structure
+
 ```
 blockchain-security-audit/
-│── audits/                 # Security audit reports  
-│── src/                    # Smart contracts, network & cross-chain security  
-│── tools/                  # Security analysis tools configurations  
-│── monitoring/             # Live attack monitoring scripts  
-│── incident-response/      # Forensics & breach investigation  
-│── docs/                   # Security policies & compliance guidelines  
-│── scripts/                # Automation scripts for audits & penetration tests  
-│── config/                 # Security policies & compliance configurations  
-│── .env                    # API keys for security tools (use .gitignore)  
-│── README.md               # Documentation overview  
-│── package.json            # Dependencies for auditing tools  
-│── requirements.txt        # Dependencies for Python security tools  
-│── hardhat.config.js       # Hardhat setup for contract analysis  
-│── Cargo.toml              # Rust setup for Solana, Substrate contract auditing  
+├── Audits/                 # Security audit reports and findings
+│   └── smart-contracts/    # Markdown audit reports
+├── docs/                   # Best practices and security case studies
+├── src/                    # Smart contracts and interoperability components
+│   ├── interoperability/   # Cross-chain bridge contracts
+│   ├── secure-smart-contracts/ # Secure implementations of common patterns
+│   └── vulnerable-smart-contracts/ # Exploitable implementations of vulnerabilities
+├── test/                   # Mocha/Chai test suite verifying exploits and mitigations
+├── tools/                  # Script configurations and external integrations
+│   └── chainalysis/        # Compliance check scripts and transaction logs
+├── monitoring/             # Live network and RPC endpoint auditing tools
+├── scripts/                # Deployment and automated pipeline runners
+├── package.json            # Node.js workspace dependencies and run scripts
+├── requirements.txt        # Python dependency specifications
+├── Cargo.toml              # Rust environment configuration
+└── hardhat.config.js       # Hardhat workspace configuration
 ```
 
 ---
 
-## **🔧 Setup & Installation**  
+## Setup and Installation
 
-### **1️⃣ Prerequisites**  
-Ensure you have the following installed:  
-🔹 **Node.js & npm** (for Hardhat & Foundry)  
-🔹 **Python** (for Slither & MythX)  
-🔹 **Docker** (for isolated security tests)  
-🔹 **Geth/Nethermind** (for Ethereum node security analysis)  
+### Prerequisites
 
-### **2️⃣ Install Dependencies**  
+The following software packages must be installed on your system:
+
+* Node.js and npm (for contract compilation and testing)
+* Python (for compliance script scanning and static analysis)
+* Curl (for testing node RPC interfaces)
+
+### Installing Dependencies
+
+Install the required npm packages and Python dependencies from the repository root:
+
 ```bash
-# Install Hardhat for Solidity contract analysis
-npm install --save-dev hardhat
+# Install Node dependencies (including Hardhat and OpenZeppelin library)
+npm install
 
-# Install Slither for static analysis
-pip install slither-analyzer
-
-# Install Foundry for fuzzing and property testing
-curl -L https://foundry.paradigm.xyz | bash
-foundryup
-
-# Install additional tools
-pip install chainalysis mythril
+# Install Python requirements
+pip install -r requirements.txt
 ```
 
 ---
 
-## **📜 Security Policies & Best Practices**  
+## Running Security Verification Tests
 
-### **1️⃣ Smart Contract Security Policies**  
-✅ **Use Solidity `^0.8.x`** to prevent integer overflows.  
-✅ **Implement `ReentrancyGuard`** to avoid reentrancy attacks.  
-✅ **Use `Ownable` or `RBAC`** for access control.  
-✅ **Minimize state changes before external calls** (Check-Effects-Interactions Pattern).  
+We utilize a comprehensive Mocha/Chai unit test suite to simulate attack vectors and verify the correctness of their mitigations.
 
-### **2️⃣ Compliance Guidelines**  
-✅ **No personal data storage on-chain** (GDPR compliance).  
-✅ **Monitor transactions for illicit activity** (AML compliance).  
-✅ **Regularly audit contracts for vulnerabilities** (OWASP, NIST).  
+### Compile Smart Contracts
 
----
-
-## **🛡️ Running Security Audits**  
-
-### **1️⃣ Smart Contract Security Audit**  
 ```bash
-# Run Slither analysis
-slither src/smart-contracts/SecureContract.sol
-
-# Run MythX security audit
-mythx analyze src/smart-contracts/SecureContract.sol
-
-# Run Hardhat tests
-npx hardhat test
+npm run compile
 ```
 
-### **2️⃣ Ethereum Node Security Audit**  
+### Run Tests and Exploit Simulations
+
+```bash
+npm run test
+```
+
+The test suite runs the following verifications:
+* Reentrancy: Verifies that an attacker can successfully drain the vulnerable contract, and that ReentrancyGuard stops the exploit on the secure contract.
+* Integer Overflow: Verifies wrap-around behavior in the unchecked arithmetic flow, and validates reversion checks in the secure implementation.
+* Flash Loan Repayment: Verifies pool draining on missing repayment checks, and validates rejection logic in the secure implementation.
+* Cross-Chain Bridge: Verifies message spoofing when message processing lacks validation, and confirms validator access gates block unauthorized attempts.
+
+---
+
+## Running Auditing & Monitoring Tools
+
+### Automated Security Scan Pipeline
+
+To run the automated analysis scanner (which executes Slither and MythX checks if installed, and falls back to running unit tests):
+
+```bash
+npm run audit
+```
+
+### Compliance Scan (Chainalysis Integration)
+
+To scan transactions list for compliance risks (runs in offline mock mode if no API key is set in the environment variables):
+
+```bash
+python tools/chainalysis/compliance.py
+```
+
+### Blockchain Node Infrastructure Check
+
+To check open RPC ports for exposure of sensitive admin or debug interfaces:
+
 ```bash
 bash monitoring/nodeSecurityMonitor.sh
 ```
 
-### **3️⃣ Flash Loan & Reentrancy Attack Detection**  
-```bash
-node monitoring/flashLoanMonitor.js
-node monitoring/reentrancyMonitor.js
-```
+---
+
+## Incident Response Actions
+
+The table below outlines playbooks for common security incidents and recommended mitigation strategies:
+
+| Threat Event | Immediate Response Action | Prevention Strategy |
+|:---|:---|:---|
+| Reentrancy Attack | Pause target contract, isolate affected functions. | Implement ReentrancyGuard, ensure Check-Effects-Interactions. |
+| Flash Loan Exploit | Halt pool withdrawals, reset oracle data feeds. | Require loan repayment verification inside the same transaction block. |
+| Cross-Chain Replay | Revoke affected validators, pause bridge contract. | Require signature nonces and validator authorization checks. |
+| RPC Endpoint Breach | Stop node execution, rotate API keys, block ports. | Restrict public RPC endpoint access via firewall (iptables). |
+| Admin Key Compromise | Rotate multisig owners, revoke previous authorizations. | Require multi-signature confirmations (e.g., Gnosis Safe). |
 
 ---
 
-## **🚨 Incident Response Playbooks**  
+## Governance and Auditing Strategies
 
-| **Attack Type** | **Immediate Actions** | **Prevention Strategies** |
-|---------------|---------------------|-------------------|
-| **Reentrancy Attack** | Pause contract, trace attacker, blacklist attacker | Use `ReentrancyGuard`, update state before external calls |
-| **Flash Loan Exploit** | Freeze lending, monitor flash loans, reset oracles | Require loan repayment, use whitelisted borrowers |
-| **Cross-Chain Replay Attack** | Implement nonces, alert validators, upgrade security | Require signatures, enforce message expiration |
-| **Ethereum Node Security Breach** | Stop node, rotate API keys, check unauthorized transactions | Restrict RPC access, use firewalls |
-| **Private Key Compromise** | Transfer funds, revoke approvals, scan for malware | Use hardware wallets, implement multi-signature |
+### Multi-Signature Configurations
+* Admin actions should require confirmations from multiple independent signers (such as Gnosis Safe multisig).
+* Establish separation of duties between keyholders to prevent single points of failure.
 
----
-
-## **📌 Secure Governance & Auditing Strategies**  
-
-### **1️⃣ Multi-Signature Wallet Security**  
-✅ Use **Gnosis Safe** for managing high-value assets.  
-✅ Require **multiple signers** for executing admin functions.  
-✅ Prevent a **single point of failure** in governance.  
-
-### **2️⃣ Automated Smart Contract Auditing**  
-
-📂 **`scripts/auditSmartContracts.js`**  
-```javascript
-const { execSync } = require("child_process");
-
-console.log("🚀 Running Automated Smart Contract Security Audit...");
-
-try {
-    console.log("🔍 Running Slither Analysis...");
-    execSync("slither src/smart-contracts/SecureContract.sol", { stdio: "inherit" });
-
-    console.log("🔍 Running MythX Analysis...");
-    execSync("mythx analyze src/smart-contracts/SecureContract.sol", { stdio: "inherit" });
-
-    console.log("✅ Security Audit Completed Successfully!");
-} catch (error) {
-    console.error("❌ Security Audit Failed:", error.message);
-}
-```
-
-📌 **Run the audit script:**  
-```bash
-node scripts/auditSmartContracts.js
-```
-
----
-
-## **📢 Next Steps**
-📌 **Integrate real-time monitoring with a blockchain SIEM (Security Information & Event Management) system.**  
-📌 **Expand compliance monitoring for additional regulatory frameworks.**  
-📌 **Develop AI-based anomaly detection for fraud prevention.**  
-
----
-
-## **📞 Contact & Contributing**  
-👨‍💻 **Developers & Security Experts**: Fork this repository & contribute!  
-📩 **Security Reports**: If you discover vulnerabilities, submit an issue or contact the maintainers.  
-
-🔥 **Stay Safe & Build Secure Blockchain Applications!** 🚀
+### Security Checklists
+* Avoid storing personal data on-chain to maintain compliance with regulatory guidelines.
+* Implement pausing functions to block contract actions in the event of an anomaly.
+* Ensure all external compiler libraries are pinned to specific versions (e.g., Solidity 0.8.19) to prevent compiler anomalies.
