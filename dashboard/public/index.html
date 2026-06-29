@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel - Blockchain Security Audit Dashboard</title>
+    <!-- Favicon (Sentinel Shield) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/><path d='M12 8v4'/><path d='M12 16h.01'/></svg>">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js and Marked.js CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="glowing-icon-svg" style="width: 22px; height: 22px; color: #0284c7;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(56, 189, 248, 0.2)"/>
+                        <path d="M12 8v4"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>SENTINEL</h1>
+                    <span>SECURITY FRAMEWORK</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="overview">
+                    <i data-lucide="layout-dashboard"></i> Overview
+                </button>
+                <button class="nav-item" data-tab="sandbox">
+                    <i data-lucide="terminal"></i> Vulnerability Sandbox
+                </button>
+                <button class="nav-item" data-tab="compliance">
+                    <i data-lucide="file-check"></i> Compliance Scanner
+                </button>
+                <button class="nav-item" data-tab="monitoring">
+                    <i data-lucide="activity"></i> Threat Monitoring
+                </button>
+                <button class="nav-item" data-tab="mitigation">
+                    <i data-lucide="shield-ban"></i> Incident Response
+                </button>
+                <button class="nav-item" data-tab="reports">
+                    <i data-lucide="file-text"></i> Audit Reports
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="status-label">Local Node: Connected</span>
+                </div>
+                <div class="version">v1.0.0 (Beta)</div>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard View -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="top-header">
+                <div class="page-title">
+                    <h2 id="current-tab-title">Security Overview</h2>
+                    <p id="current-tab-subtitle">Real-time smart contract health and network telemetry.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="run-global-audit-btn">
+                        <i data-lucide="play"></i> Run Security Suite
+                    </button>
+                    <div class="notification-bell" id="notification-bell-btn">
+                        <i data-lucide="bell" id="bell-icon"></i>
+                        <span class="badge" id="alert-count-badge">0</span>
+                        <!-- Notification Dropdown -->
+                        <div class="notification-dropdown hidden" id="notification-dropdown">
+                            <div class="dropdown-header">
+                                <h4>Alert Logs</h4>
+                                <button class="btn btn-small btn-secondary" id="clear-dropdown-alerts-btn">Clear All</button>
+                            </div>
+                            <div class="dropdown-body" id="dropdown-alerts-list">
+                                <div class="text-center py-4 text-muted">No active logs.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tenant User Dropdown (Fireblocks style) -->
+                    <div class="user-profile-menu" id="user-profile-menu-btn">
+                        <div class="avatar-circle">JH</div>
+                        <div class="profile-dropdown hidden" id="profile-dropdown">
+                            <div class="profile-info-header">
+                                <div class="avatar-large">JH</div>
+                                <div class="info-text">
+                                    <h4>Juan Henry</h4>
+                                    <span>Juan's Tenant</span>
+                                </div>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <button class="profile-btn" onclick="alert('Switching Workspace...')"><i data-lucide="git-branch"></i> Switch Workspace</button>
+                            <button class="profile-btn" onclick="alert('Signing Out...')"><i data-lucide="log-out"></i> Sign Out</button>
+                        </div>
+                    </div>
+
+                    <!-- Telemetry Panel Toggle Button -->
+                    <button class="btn-icon-toggle" id="toggle-telemetry-panel-btn" title="Toggle Telemetry Feed" style="margin-left: 8px; background: transparent; border: 1px solid var(--border-hover); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer; transition: all 0.25s ease;">
+                        <i data-lucide="activity"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Tab: Overview -->
+            <section id="tab-overview" class="tab-panel active">
+                <!-- Fireblocks style Target Accounts Row -->
+                <div class="accounts-row">
+                    <!-- Card 1: Bridges -->
+                    <div class="account-card">
+                        <div class="acc-icon-box">
+                            <i data-lucide="git-fork"></i>
+                        </div>
+                        <div class="acc-details">
+                            <span class="acc-label">Exchanges Bridge</span>
+                            <span class="acc-value text-success">Compliant</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2: Cel Treasury Highlighted Vault Card -->
+                    <div class="account-card vault-highlight">
+                        <div class="acc-icon-box vault">
+                            <i data-lucide="shield"></i>
+                        </div>
+                        <div class="acc-details">
+                            <span class="acc-label">Vault</span>
+                            <span class="acc-title">Cel Treasury (Secure)</span>
+                            <span class="acc-value">$45.8M</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3: Fiat Compliance -->
+                    <div class="account-card">
+                        <div class="acc-icon-box fiat">
+                            <i data-lucide="landmark"></i>
+                        </div>
+                        <div class="acc-details">
+                            <span class="acc-label">Fiat Compliance</span>
+                            <span class="acc-value">Low Risk</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breadcrumbs & Stats bar -->
+                <div class="breadcrumbs-bar">
+                    <div class="bread-left">
+                        <span class="bread-path">Vault</span>
+                        <i data-lucide="chevron-right"></i>
+                        <span class="bread-active">Cel Treasury</span>
+                        <span class="bread-badge">10</span>
+                    </div>
+                    <div class="bread-right">
+                        <div class="stat-badge">
+                            <span class="label">Audited</span>
+                            <span class="val">4 Contracts</span>
+                        </div>
+                        <div class="stat-badge">
+                            <span class="label">Telemetries</span>
+                            <span class="val">3 Active</span>
+                        </div>
+                        <div class="stat-badge">
+                            <span class="label">Threat State</span>
+                            <span class="val text-success">Safe</span>
+                        </div>
+                        <button class="btn-more" onclick="alert('Vault Actions: No additional configurations.')"><i data-lucide="more-horizontal"></i></button>
+                        <button class="btn-cyan-add" id="run-suite-top-btn" onclick="document.getElementById('run-global-audit-btn').click()"><i data-lucide="plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="content-grid-two-one mt-4">
+                    <!-- Left: Smart Contracts Audit list -->
+                    <div class="card smart-contracts-scope-card">
+                        <div class="card-header-actions">
+                            <h3><i data-lucide="list"></i> Smart Contracts Audit Scope</h3>
+                            <div class="table-filters">
+                                <i data-lucide="search" class="search-ic"></i>
+                                <input type="text" placeholder="Search..." class="search-box-sm">
+                                <span class="lbl-archived">Archived</span>
+                                <label class="switch sm">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Asset</th>
+                                        <th>Details & Path</th>
+                                        <th>Indicators</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="table-row-clickable" onclick="switchTab('sandbox')">
+                                        <td>
+                                            <div class="asset-cell">
+                                                <div class="asset-logo eth"><i data-lucide="coins"></i></div>
+                                                <div>
+                                                    <span class="asset-name">Reentrancy Attack</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="asset-path">
+                                                <span class="path">src/vulnerable-smart-contracts/Vulnerable.sol</span>
+                                                <span class="val-eth">208.9289 ETH</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="asset-indicators">
+                                                <i data-lucide="arrow-down" class="text-danger" title="Vulnerable Version"></i>
+                                                <i data-lucide="arrow-up" class="text-success" title="Mitigated Version"></i>
+                                            </div>
+                                        </td>
+                                        <td><button class="btn-row-action" onclick="event.stopPropagation(); alert('Target file: Vulnerable.sol')"><i data-lucide="more-horizontal"></i></button></td>
+                                    </tr>
+                                    <tr class="table-row-clickable" onclick="switchTab('sandbox')">
+                                        <td>
+                                            <div class="asset-cell">
+                                                <div class="asset-logo link"><i data-lucide="network"></i></div>
+                                                <div>
+                                                    <span class="asset-name">Integer Overflow</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="asset-path">
+                                                <span class="path">src/vulnerable-smart-contracts/IntegerOverflow.sol</span>
+                                                <span class="val-eth">120.0000 ETH</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="asset-indicators">
+                                                <i data-lucide="arrow-down" class="text-danger" title="Vulnerable Version"></i>
+                                                <i data-lucide="arrow-up" class="text-success" title="Mitigated Version"></i>
+                                            </div>
+                                        </td>
+                                        <td><button class="btn-row-action" onclick="event.stopPropagation(); alert('Target file: IntegerOverflow.sol')"><i data-lucide="more-horizontal"></i></button></td>
+                                    </tr>
+                                    <tr class="table-row-clickable" onclick="switchTab('sandbox')">
+                                        <td>
+                                            <div class="asset-cell">
+                                                <div class="asset-logo eos"><i data-lucide="wallet-cards"></i></div>
+                                                <div>
+                                                    <span class="asset-name">Unprotected Flash Loan</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="asset-path">
+                                                <span class="path">src/vulnerable-smart-contracts/VulnerableLending.sol</span>
+                                                <span class="val-eth">500.0000 ETH</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="asset-indicators">
+                                                <i data-lucide="arrow-down" class="text-danger" title="Vulnerable Version"></i>
+                                                <i data-lucide="arrow-up" class="text-success" title="Mitigated Version"></i>
+                                            </div>
+                                        </td>
+                                        <td><button class="btn-row-action" onclick="event.stopPropagation(); alert('Target file: VulnerableLending.sol')"><i data-lucide="more-horizontal"></i></button></td>
+                                    </tr>
+                                    <tr class="table-row-clickable" onclick="switchTab('sandbox')">
+                                        <td>
+                                            <div class="asset-cell">
+                                                <div class="asset-logo ltc"><i data-lucide="shuffle"></i></div>
+                                                <div>
+                                                    <span class="asset-name">Cross-Chain Bridge</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="asset-path">
+                                                <span class="path">src/interoperability/InsecureBridge.sol</span>
+                                                <span class="val-eth">14.7000 ETH</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="asset-indicators">
+                                                <i data-lucide="arrow-down" class="text-danger" title="Vulnerable Version"></i>
+                                                <i data-lucide="arrow-up" class="text-success" title="Mitigated Version"></i>
+                                            </div>
+                                        </td>
+                                        <td><button class="btn-row-action" onclick="event.stopPropagation(); alert('Target file: InsecureBridge.sol')"><i data-lucide="more-horizontal"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Concentric Severity Distribution Chart -->
+                    <div class="card chart-container severity-donut-card">
+                        <h3><i data-lucide="pie-chart"></i> Available</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="vulnChart"></canvas>
+                            <div class="chart-center-text">
+                                <span class="lbl">Available</span>
+                                <span class="val">$45.6M</span>
+                            </div>
+                        </div>
+                        <div class="chart-legend-list">
+                            <div class="legend-item">
+                                <span class="dot eth"></span>
+                                <span class="label">Reentrancy (SEC-01)</span>
+                                <span class="percent">80%</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="dot link"></span>
+                                <span class="label">Integer Overflow (SEC-04)</span>
+                                <span class="percent">16%</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="dot eos"></span>
+                                <span class="label">Flash Loan (SEC-02)</span>
+                                <span class="percent">3%</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="dot others"></span>
+                                <span class="label">Bridge Security (SEC-03)</span>
+                                <span class="percent">1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Sandbox -->
+            <section id="tab-sandbox" class="tab-panel">
+                <div class="sandbox-header">
+                    <div class="vuln-selector">
+                        <label for="vuln-select-dropdown">Select Vulnerability Target:</label>
+                        <select id="vuln-select-dropdown" class="select-input">
+                            <option value="reentrancy">SEC-01: Reentrancy Attack</option>
+                            <option value="overflow">SEC-04: Integer Overflow</option>
+                            <option value="flashloan">SEC-02: Unprotected Flash Loan</option>
+                            <option value="bridge">SEC-03: Cross-Chain Bridge Security</option>
+                        </select>
+                    </div>
+                    <div class="sandbox-actions">
+                        <button class="btn btn-danger" id="run-exploit-btn">Simulate Exploit</button>
+                        <button class="btn btn-success" id="run-mitigation-btn">Validate Mitigation</button>
+                    </div>
+                </div>
+
+                <div class="card vuln-info-card">
+                    <h3 id="sandbox-vuln-name">Reentrancy Attack</h3>
+                    <p id="sandbox-vuln-desc">Loading description...</p>
+                </div>
+
+                <div class="code-split-view">
+                    <div class="code-card vulnerable">
+                        <div class="code-header">
+                            <span id="vuln-contract-file-label">Vulnerable Implementation</span>
+                            <span class="badge badge-danger">Exploitable</span>
+                        </div>
+                        <pre><code id="vulnerable-code-block" class="solidity">// Loading...</code></pre>
+                    </div>
+                    <div class="code-card secure">
+                        <div class="code-header">
+                            <span id="sec-contract-file-label">Mitigated Implementation</span>
+                            <span class="badge badge-success">Secure</span>
+                        </div>
+                        <pre><code id="secure-code-block" class="solidity">// Loading...</code></pre>
+                    </div>
+                </div>
+
+                <div class="card terminal-container">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <span>Console Output - Exploit Simulation</span>
+                        <button class="btn btn-small btn-secondary" id="clear-terminal-btn">Clear</button>
+                    </div>
+                    <div class="terminal-body" id="sandbox-terminal">
+                        <p class="term-line system">Terminal initialized. Select an action above to run hardhat unit tests...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Compliance -->
+            <section id="tab-compliance" class="tab-panel">
+                <div class="content-grid-one-two">
+                    <div class="card">
+                        <h3>Address Compliance Lookups</h3>
+                        <p class="helper-text">Verify specific wallet addresses using compliance lists and risk scoring engines.</p>
+                        <div class="form-group">
+                            <label for="address-lookup-input">Ethereum Address</label>
+                            <input type="text" id="address-lookup-input" class="text-input" placeholder="0x..." value="0xHighRiskAddress">
+                        </div>
+                        <button class="btn btn-primary btn-block" id="compliance-check-btn">Run Risk Analysis</button>
+
+                        <div class="risk-result-card hidden" id="risk-result">
+                            <div class="risk-gauge">
+                                <div class="risk-gauge-inner" id="risk-gauge-color"></div>
+                                <div class="risk-score-value" id="risk-score-val">0</div>
+                            </div>
+                            <h4 id="risk-rating-label">Low Risk</h4>
+                            <p id="risk-detail-text">This address does not match any flagged wallets on compliance records.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header-actions">
+                            <h3>Transaction Risk Monitoring (Chainalysis Integration)</h3>
+                            <button class="btn btn-secondary btn-small" id="run-compliance-scan-btn">Scan Transactions</button>
+                        </div>
+                        <p class="helper-text">Offline checking mode parses node trace files and detects addresses linked to illicit mixers or hacks.</p>
+                        
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tx Hash</th>
+                                        <th>Sender</th>
+                                        <th>Receiver</th>
+                                        <th>Amount (ETH)</th>
+                                        <th>Risk Score</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="compliance-tx-table">
+                                    <tr>
+                                        <td colspan="6" class="text-center">No data scanned yet. Click "Scan Transactions" to run the parser.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card terminal-container mt-4">
+                    <div class="terminal-header">
+                        <span>Chainalysis Scanner Console</span>
+                    </div>
+                    <div class="terminal-body" id="compliance-terminal">
+                        <p class="term-line system">Compliance script terminal initialized. Ready for scan executions...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Monitoring -->
+            <section id="tab-monitoring" class="tab-panel">
+                <div class="content-grid-two-one">
+                    <div class="card">
+                        <h3>Live Telemetry Configuration</h3>
+                        <p class="helper-text">Toggle background monitoring services probing the simulated network node.</p>
+                        
+                        <div class="monitor-controls">
+                            <div class="monitor-switch">
+                                <div class="monitor-label-group">
+                                    <h4>On-Chain Transaction Watcher</h4>
+                                    <p>Tracks large capital moves and transfer alerts above 100 ETH.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="mon-onchain" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="monitor-switch">
+                                <div class="monitor-label-group">
+                                    <h4>Reentrancy Block Watcher</h4>
+                                    <p>Detects multiple contract interactions inside a single block header.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="mon-reentrancy">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="monitor-switch">
+                                <div class="monitor-label-group">
+                                    <h4>Flash Loan Pool Monitor</h4>
+                                    <p>Triggers critical alarms on pool interactions matching borrowing threshold limits.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="mon-flashloan">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="monitor-switch">
+                                <div class="monitor-label-group">
+                                    <h4>Cross-Chain Replay Monitor</h4>
+                                    <p>Cross-references bridge transactions across network state graphs.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="mon-crosschain">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>RPC Port Exposure Scan</h3>
+                        <p class="helper-text">Validates if sensitive geth debug APIs or management ports are exposed on the host node.</p>
+                        <div class="node-probe-result" id="node-probe-result-box">
+                            <div class="probe-loading">Click probe button below to scan network...</div>
+                        </div>
+                        <button class="btn btn-primary btn-block mt-4" id="run-node-probe-btn">Scan RPC Configuration</button>
+                    </div>
+                </div>
+
+                <div class="card terminal-container mt-4">
+                    <div class="terminal-header">
+                        <div class="pulse green"></div>
+                        <span>Live Block Explorer & Event Stream</span>
+                    </div>
+                    <div class="terminal-body monitor-stream" id="monitoring-terminal">
+                        <!-- Dynamic monitoring events go here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Mitigation -->
+            <section id="tab-mitigation" class="tab-panel">
+                <div class="alert alert-danger-banner">
+                    <i data-lucide="shield-alert"></i>
+                    <div>
+                        <h4>EMERGENCY RISK PROTOCOLS</h4>
+                        <p>These actions bypass consensus. In the event of a confirmed contract breach, trigger the emergency pause switches to isolate balances immediately.</p>
+                    </div>
+                </div>
+
+                <div class="content-grid-two-one">
+                    <div class="card">
+                        <h3>Emergency Circuit Breakers (Pause States)</h3>
+                        <p class="helper-text">Trigger contract pauses to freeze state transfers and lock vulnerable functions.</p>
+                        <div class="circuit-breakers-grid">
+                            <div class="breaker-card">
+                                <div>
+                                    <h4>Vulnerable.sol</h4>
+                                    <span class="sub-label">Reentrancy Target</span>
+                                </div>
+                                <button class="btn btn-danger" onclick="togglePause('Vulnerable')" id="btn-pause-Vulnerable">Pause Contract</button>
+                            </div>
+                            <div class="breaker-card">
+                                <div>
+                                    <h4>VulnerableLending.sol</h4>
+                                    <span class="sub-label">Lending Pool</span>
+                                </div>
+                                <button class="btn btn-danger" onclick="togglePause('VulnerableLending')" id="btn-pause-VulnerableLending">Pause Contract</button>
+                            </div>
+                            <div class="breaker-card">
+                                <div>
+                                    <h4>InsecureBridge.sol</h4>
+                                    <span class="sub-label">Cross-chain bridge</span>
+                                </div>
+                                <button class="btn btn-danger" onclick="togglePause('InsecureBridge')" id="btn-pause-InsecureBridge">Pause Contract</button>
+                            </div>
+                            <div class="breaker-card">
+                                <div>
+                                    <h4>IntegerOverflow.sol</h4>
+                                    <span class="sub-label">Token Balances</span>
+                                </div>
+                                <button class="btn btn-danger" onclick="togglePause('IntegerOverflow')" id="btn-pause-IntegerOverflow">Pause Contract</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Incident Analysis & Log Capturer</h3>
+                        <p class="helper-text">Provide an active transaction hash to execute trace calls and capture debug traces.</p>
+                        <div class="form-group">
+                            <label for="tx-hash-input">Transaction Hash</label>
+                            <input type="text" id="tx-hash-input" class="text-input" placeholder="0x..." value="0xab3d09a123f85bc4e5f72...">
+                        </div>
+                        <div class="form-group">
+                            <label for="exploit-type-select">Associated Attack Profile</label>
+                            <select id="exploit-type-select" class="select-input">
+                                <option value="reentrancy">Reentrancy Loop</option>
+                                <option value="flashloan">Flash Loan Arbitrage</option>
+                                <option value="replay">Bridge Signature Spoofing</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-block" id="trigger-incident-btn">Run Incident Capture Playbook</button>
+                    </div>
+                </div>
+
+                <div class="card terminal-container mt-4">
+                    <div class="terminal-header">
+                        <span>Incident Log Capturer - Captured Traces</span>
+                    </div>
+                    <div class="terminal-body" id="incident-terminal">
+                        <p class="term-line system">No active incident captures registered. Awaiting trace call actions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Reports -->
+            <section id="tab-reports" class="tab-panel">
+                <div class="card report-markdown-container">
+                    <div class="report-header">
+                        <div>
+                            <h2>Formal Audit & Review Report</h2>
+                            <p>Full compiled security report detailing findings, risk severity, and remediation steps.</p>
+                        </div>
+                        <div class="report-header-buttons">
+                            <button class="btn btn-secondary" onclick="fetchReport()"><i data-lucide="rotate-cw"></i> Refresh</button>
+                            <button class="btn btn-secondary" onclick="downloadReport('markdown')"><i data-lucide="file-down"></i> Export Markdown</button>
+                            <button class="btn btn-primary" onclick="downloadReport('pdf')"><i data-lucide="download"></i> Export PDF</button>
+                        </div>
+                    </div>
+                    <hr class="report-divider">
+                    <div class="report-body markdown-content" id="report-md-content">
+                        Loading report content...
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Right Telemetry Panel (Fireblocks style "Active transfers" look) -->
+        <aside class="right-telemetry-panel closed" id="right-telemetry-panel">
+            <div class="panel-header">
+                <h3>Active Telemetry</h3>
+                <div class="panel-header-actions">
+                    <button class="btn-icon" title="Configure monitors"><i data-lucide="sliders" onclick="switchTab('monitoring')"></i></button>
+                    <button class="btn-icon" title="Clear alerts" id="clear-telemetry-btn"><i data-lucide="trash-2"></i></button>
+                </div>
+            </div>
+            
+            <div class="filter-bar">
+                <button class="btn-filter active">Today</button>
+            </div>
+            
+            <div class="telemetry-cards-list" id="telemetry-cards-list">
+                <!-- Event cards go here dynamically -->
+                <div class="text-center py-4 text-muted">No security events triggered.</div>
+            </div>
+        </aside>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

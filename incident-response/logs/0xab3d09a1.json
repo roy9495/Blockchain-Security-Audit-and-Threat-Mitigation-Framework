@@ -1,0 +1,9 @@
+{
+    "timestamp": "2026-06-29T17:23:48.517Z",
+    "txHash": "0xab3d09a123f85bc4e5f72...",
+    "type": "reentrancy",
+    "contractState": "Vulnerable",
+    "callDepth": 6,
+    "gasUsed": 120000,
+    "mitigationStatus": "Triggering pause actions..."
+}
