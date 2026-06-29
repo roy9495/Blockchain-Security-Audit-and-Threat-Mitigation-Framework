@@ -12,7 +12,7 @@
     "test": "npx hardhat test",
     "audit": "node scripts/automatedAudit.js",
     "dashboard": "node dashboard/server.js",
-    "build": "npx hardhat compile && pip install -r requirements.txt"
+    "build": "npm install && npx hardhat compile && pip install -r requirements.txt"
   },
   "author": "TATHAGATA ROY",
   "license": "ISC",
