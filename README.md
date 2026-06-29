@@ -2,11 +2,11 @@
 
 Sentinel is an end-to-end security auditing, vulnerability verification, and threat mitigation solution for Ethereum smart contracts, blockchain node infrastructures, cross-chain bridges, transaction compliance, and incident response. 
 
-The framework is paired with a premium, high-fidelity **interactive dashboard** inspired by industry-leading vault management interfaces (Fireblocks). It provides real-time event feeds, automated exploit simulations, on-chain telemetry watchers, and audit-ready report generation.
+The framework is paired with a premium, high-fidelity **interactive dashboard** inspired by industry-leading vault management interfaces. It provides real-time event feeds, automated exploit simulations, on-chain telemetry watchers, and audit-ready report generation.
 
 ---
 
-## 🖥️ Interactive Dashboard (SENTINEL Command Center)
+##  Interactive Dashboard (SENTINEL Command Center)
 
 The framework includes a fully graphical dashboard to monitor network configurations, inspect contract code, run verification suites, and trigger incident response playbooks.
 
@@ -29,7 +29,7 @@ npm run dashboard
 ```
 
 Once started, open your web browser and navigate to:
-👉 **[http://localhost:3000](http://localhost:3000)**
+ **[http://localhost:3000](http://localhost:3000)**
 
 ---
 
@@ -60,7 +60,7 @@ blockchain-security-audit/
 
 ---
 
-## ⚙️ Setup and Installation
+##  Setup and Installation
 
 ### Prerequisites
 
@@ -82,7 +82,7 @@ py -m pip install -r requirements.txt
 
 ---
 
-## 🧪 Security Verification (CLI Mode)
+##  Security Verification (CLI Mode)
 
 We utilize a comprehensive Mocha/Chai unit test suite to simulate attack vectors and verify the correctness of their mitigations.
 
@@ -106,7 +106,7 @@ The test suite runs the following verifications:
 
 ---
 
-## 🛡️ Telemetry & Compliance CLI Scripts
+##  Telemetry & Compliance CLI Scripts
 
 ### Compliance Scan (Chainalysis Integration)
 
@@ -130,7 +130,7 @@ bash monitoring/nodeSecurityMonitor.sh
 
 ---
 
-## 🚨 Incident Response Playbook
+##  Incident Response Playbook
 
 The table below outlines playbooks for common security incidents and recommended mitigation strategies:
 
@@ -144,15 +144,11 @@ The table below outlines playbooks for common security incidents and recommended
 
 ---
 
-## 🚀 Deploying to Render (Cloud Hosting)
+##  Deploying to Render (Cloud Hosting)
 
 The framework contains a predefined `render.yaml` Blueprint file to automate cloud setup:
 
-1. Push this repository to **GitHub**.
-2. Log in to the **[Render Dashboard](https://dashboard.render.com/)**.
-3. Click **New** > **Blueprint**.
-4. Select and connect your repository.
-5. Render will automatically parse the `render.yaml` configuration and launch:
+Render will automatically parse the `render.yaml` configuration and launch:
    * **Service Name:** `sentinel-security-dashboard`
    * **Environment Runtime:** Node.js
    * **Build Command:** `npm run build` (compiles Solidity contracts via Hardhat and installs Python requirements)
